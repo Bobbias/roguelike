@@ -1,1 +1,4 @@
 .pylintrc
+*pylintrc
+*~
+/#.pylintrc#
