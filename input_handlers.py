@@ -1,4 +1,4 @@
-from tcod import *
+import tcod
 
 def handle_keys(key):
     if key.vk == tcod.KEY_UP:

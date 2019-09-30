@@ -1,16 +1,17 @@
-from tcod import * # pylint: disable=unused-import
+import tcod
 import tcod.event
 from input_handlers import handle_keys
 from entity import Entity
 from render_functions import render_all, clear_all
 
-LIMIT_FPS = 20  #only for realtime roguelikes
+LIMIT_FPS = 20  # only for realtime roguelikes
 
 TURN_BASED = True
 FULLSCREEN = False
 
 color_dark_wall = tcod.Color(0, 0, 100)
 color_dark_ground = tcod.Color(50, 50, 150)
+
 
 class Tile:
     """A tile in the map. Can block movement or sight."""
@@ -20,6 +21,7 @@ class Tile:
         block_sight = blocked if block_sight is None else None
         self.block_sight = block_sight
 
+
 class Rect:
     """Defines a rectangle. Takes x, y, width, and height."""
     def __init__(self, x, y, w, h):
@@ -27,6 +29,7 @@ class Rect:
         self.y1 = y
         self.x2 = x + w
         self.y2 = y + h
+
 
 def main():
     """Main function for the game."""
@@ -40,17 +43,18 @@ def main():
     player = Entity(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, '@', tcod.white)
     npc = Entity(SCREEN_WIDTH // 2 - 5, SCREEN_HEIGHT // 2, '@', tcod.yellow)
     entities = [npc, player]
-    
-    #setup Font
+
+    # setup Font
     font_path = 'arial10x10.png'
     font_flags = tcod.FONT_TYPE_GREYSCALE | tcod.FONT_LAYOUT_TCOD
     tcod.console_set_custom_font(font_path, font_flags)
 
-    #init screen
+    # init screen
     window_title = 'Python 3 libtcod tutorial'
-    con = tcod.console.Console(SCREEN_WIDTH, SCREEN_HEIGHT, window_title, FULLSCREEN)
+    con = tcod.console.Console(SCREEN_WIDTH, SCREEN_HEIGHT,
+                               window_title, FULLSCREEN)
 
-    tcod.sys_set_fps(LIMIT_FPS)  #only for realtime roguelikes
+    tcod.sys_set_fps(LIMIT_FPS)  # only for realtime roguelikes
 
     key = tcod.Key()
     mouse = tcod.Mouse()
@@ -79,6 +83,7 @@ def main():
 
         if fullscreen:
             tcod.console_set_fullscreen(not tcod.console_is_fullscreen())
+
 
 if __name__ == '__main__':
     main()
