@@ -3,6 +3,7 @@ import tcod.event
 from input_handlers import handle_keys
 from entity import Entity
 from render_functions import render_all, clear_all
+from map_objects.game_map import GameMap
 
 LIMIT_FPS = 20  # only for realtime roguelikes
 
