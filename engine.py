@@ -9,19 +9,6 @@ LIMIT_FPS = 20  # only for realtime roguelikes
 TURN_BASED = True
 FULLSCREEN = False
 
-color_dark_wall = tcod.Color(0, 0, 100)
-color_dark_ground = tcod.Color(50, 50, 150)
-
-
-class Tile:
-    """A tile in the map. Can block movement or sight."""
-    def __init__(self, blocked, block_sight=None):
-        self.blocked = blocked
-
-        block_sight = blocked if block_sight is None else None
-        self.block_sight = block_sight
-
-
 class Rect:
     """Defines a rectangle. Takes x, y, width, and height."""
     def __init__(self, x, y, w, h):
@@ -40,6 +27,11 @@ def main():
     MAP_WIDTH = 80
     MAP_HEIGHT = 45
 
+    colors = {
+        'dark_wall': tcod.Color(0, 0, 100)
+        'dark_ground': tcod.Color(50, 50, 150)
+    }
+    
     player = Entity(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, '@', tcod.white)
     npc = Entity(SCREEN_WIDTH // 2 - 5, SCREEN_HEIGHT // 2, '@', tcod.yellow)
     entities = [npc, player]
@@ -54,7 +46,7 @@ def main():
     con = tcod.console.Console(SCREEN_WIDTH, SCREEN_HEIGHT,
                                window_title, FULLSCREEN)
 
-    tcod.sys_set_fps(LIMIT_FPS)  # only for realtime roguelikes
+    game_map = GameMap(MAP_WIDTH, MAP_HEIGHT)
 
     key = tcod.Key()
     mouse = tcod.Mouse()
