@@ -38,7 +38,7 @@ def main():
     entities = [npc, player]
 
     # setup Font
-    font_path = 'arial10x10.png'
+    font_path = '/home/bobbias/roguelike/arial10x10.png'
     font_flags = tcod.FONT_TYPE_GREYSCALE | tcod.FONT_LAYOUT_TCOD
     tcod.console_set_custom_font(font_path, font_flags)
 
