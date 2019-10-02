@@ -18,7 +18,7 @@ class GameMap:
         room2 = Rect(35, 15, 10, 15)
 
         self.create_room(room1)
-        self.create_room(room1)
+        self.create_room(room2)
 
 
     def create_room(self, room):
