@@ -29,7 +29,7 @@ def main():
     MAP_HEIGHT = 45
 
     colors = {
-        'dark_wall': tcod.Color(0, 0, 100)
+        'dark_wall': tcod.Color(0, 0, 100),
         'dark_ground': tcod.Color(50, 50, 150)
     }
     
@@ -43,9 +43,8 @@ def main():
     tcod.console_set_custom_font(font_path, font_flags)
 
     # init screen
-    window_title = 'Python 3 libtcod tutorial'
-    con = tcod.console.Console(SCREEN_WIDTH, SCREEN_HEIGHT,
-                               window_title, FULLSCREEN)
+    # window_title = 'Python 3 libtcod tutorial'
+    con = tcod.console.Console(SCREEN_WIDTH, SCREEN_HEIGHT)
 
     game_map = GameMap(MAP_WIDTH, MAP_HEIGHT)
 
@@ -55,7 +54,7 @@ def main():
     while not tcod.console_is_window_closed():
         tcod.sys_check_for_event(tcod.EVENT_KEY_PRESS, key, mouse)
 
-        render_all(con, entities, SCREEN_WIDTH, SCREEN_HEIGHT)
+        render_all(con, entities, game_map, SCREEN_WIDTH, SCREEN_HEIGHT, colors)
 
         tcod.console_flush()
 
