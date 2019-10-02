@@ -44,7 +44,7 @@ def main():
 
     # init screen
     # window_title = 'Python 3 libtcod tutorial'
-    con = tcod.console.Console(SCREEN_WIDTH, SCREEN_HEIGHT)
+    con = tcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, order='F')
 
     game_map = GameMap(MAP_WIDTH, MAP_HEIGHT)
 
