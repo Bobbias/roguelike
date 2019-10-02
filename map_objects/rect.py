@@ -1,4 +1,4 @@
-class ClassNamRecte:
+class Rect:
     def __init__(self, x, y, w, h):
         """
 
