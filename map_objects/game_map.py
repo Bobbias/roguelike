@@ -13,6 +13,14 @@ class GameMap:
 
         return tiles
 
+    def create_map(self):
+        room1 = Rect(20, 15, 10, 15)
+        room2 = Rect(35, 15, 10, 15)
+
+        self.create_room(room1)
+        self.create_room(room1)
+
+
     def create_room(self, room):
         for x in range(room.x1 +1, room.x2):
             for y in range(room.y1 + 1, room.y2):

@@ -47,6 +47,7 @@ def main():
     con = tcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, order='F')
 
     game_map = GameMap(MAP_WIDTH, MAP_HEIGHT)
+    game_map.create_map()
 
     key = tcod.Key()
     mouse = tcod.Mouse()
