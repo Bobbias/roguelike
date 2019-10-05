@@ -10,15 +10,6 @@ LIMIT_FPS = 20  # only for realtime roguelikes
 TURN_BASED = True
 FULLSCREEN = False
 
-class Rect:
-    """Defines a rectangle. Takes x, y, width, and height."""
-    def __init__(self, x, y, w, h):
-        self.x1 = x
-        self.y1 = y
-        self.x2 = x + w
-        self.y2 = y + h
-
-
 def main():
     """Main function for the game."""
 
