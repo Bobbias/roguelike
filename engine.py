@@ -1,7 +1,7 @@
 import tcod
 import tcod.event
 from input_handlers import handle_keys
-from entity import Entity
+from entity import Entity, get_blocking_entities_at_location
 from render_functions import render_all, clear_all
 from map_objects.game_map import GameMap
 from fov_functions import init_fov, recompute_fov
@@ -37,7 +37,7 @@ def main():
         'light_ground': tcod.Color(200, 180, 50)
     }
     
-    player = Entity(0, 0, '@', tcod.white)
+    player = Entity(0, 0, '@', tcod.white, 'Player', blocks=True)
     entities = [player]
 
     # setup Font
@@ -78,9 +78,17 @@ def main():
 
         if move:
             dx, dy = move
-            if not game_map.is_blocked(player.x + dx, player.y + dy):
-                player.move(dx, dy)
-                fov_recompute = True
+            destination_x = player.x + dx
+            destination_y = player.y + dy
+
+            if not game_map.is_blocked(destination_x, destination_y):
+                target = get_blocking_entities_at_location(entities, destination_x, destination_y)
+
+                if target:
+                    print("you kick the {} in the shins, much to it's dismay!".format(target.name))
+                else:
+                    player.move(dx, dy)
+                    fov_recompute = True
 
         if exit_game:
             return True
