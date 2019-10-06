@@ -5,6 +5,8 @@ from entity import Entity, get_blocking_entities_at_location
 from render_functions import render_all, clear_all
 from map_objects.game_map import GameMap
 from fov_functions import init_fov, recompute_fov
+from game_states import GameStates
+from components.fighter import Fighter
 
 LIMIT_FPS = 20  # only for realtime roguelikes
 
@@ -36,8 +38,9 @@ def main():
         'light_wall': tcod.Color(130, 110, 50),
         'light_ground': tcod.Color(200, 180, 50)
     }
-    
-    player = Entity(0, 0, '@', tcod.white, 'Player', blocks=True)
+
+    fighter_component = Fighter(hp=30, defense=2, power=5)
+    player = Entity(0, 0, '@', tcod.white, 'Player', blocks=True, fighter=fighter_component)
     entities = [player]
 
     # setup Font
@@ -58,6 +61,8 @@ def main():
     key = tcod.Key()
     mouse = tcod.Mouse()
 
+    game_state = GameStates.PLAYERS_TURN
+
     while not tcod.console_is_window_closed():
         tcod.sys_check_for_event(tcod.EVENT_KEY_PRESS, key, mouse)
         if fov_recompute:
@@ -76,7 +81,7 @@ def main():
         exit_game = action.get('exit')
         fullscreen = action.get('fullscreen')
 
-        if move:
+        if move and game_state == GameStates.PLAYERS_TURN:
             dx, dy = move
             destination_x = player.x + dx
             destination_y = player.y + dy
@@ -89,12 +94,19 @@ def main():
                 else:
                     player.move(dx, dy)
                     fov_recompute = True
+                game_state = GameStates.ENEMY_TURN
 
         if exit_game:
             return True
 
         if fullscreen:
             tcod.console_set_fullscreen(not tcod.console_is_fullscreen())
+
+        if game_state == GameStates.ENEMY_TURN:
+            for entity in entities:
+                if entity.ai:
+                    entity.ai.take_turn()
+            game_state = GameStates.PLAYERS_TURN
 
 
 if __name__ == '__main__':
