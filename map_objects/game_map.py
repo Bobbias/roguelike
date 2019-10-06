@@ -1,5 +1,6 @@
 from map_objects.tile import Tile
 from map_objects.rect import Rect
+from random import randint
 
 
 class GameMap:
@@ -13,15 +14,16 @@ class GameMap:
 
         return tiles
 
-    def create_map(self):
-        room1 = Rect(20, 15, 10, 15)
-        room2 = Rect(35, 15, 10, 15)
+    def create_map(self, max_rooms, room_min, room_max, map_width, map_height, player):
+        rooms = []
+        num_rooms = 0
 
-        self.create_room(room1)
-        self.create_room(room2)
+        for r in range(max_rooms):
+            w = randint(room_min, room_max)
+            h = randint(room_min, room_max)
 
-        self.create_h_tunnel(25, 40, 23)
-
+            x = randint(0, map_width - w - 1)
+            y = randint(0, map_height - h - 1)
 
     def create_room(self, room):
         for x in range(room.x1 +1, room.x2):
