@@ -28,6 +28,8 @@ def main():
     FOV_LIGHT_WALLS = True
     FOV_RADIUS = 10
 
+    max_monsters_per_room = 3
+    
     colors = {
         'dark_wall': tcod.Color(0, 0, 100),
         'dark_ground': tcod.Color(50, 50, 150),
@@ -35,9 +37,8 @@ def main():
         'light_ground': tcod.Color(200, 180, 50)
     }
     
-    player = Entity(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, '@', tcod.white)
-    npc = Entity(SCREEN_WIDTH // 2 - 5, SCREEN_HEIGHT // 2, '@', tcod.yellow)
-    entities = [npc, player]
+    player = Entity(0, 0, '@', tcod.white)
+    entities = [player]
 
     # setup Font
     font_path = '/home/bobbias/roguelike/arial10x10.png'
@@ -49,7 +50,7 @@ def main():
     con = tcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, order='F')
 
     game_map = GameMap(MAP_WIDTH, MAP_HEIGHT)
-    game_map.create_map(MAX_ROOMS, ROOM_MIN_SIZE, ROOM_MAX_SIZE, MAP_WIDTH, MAP_HEIGHT, player)
+    game_map.create_map(MAX_ROOMS, ROOM_MIN_SIZE, ROOM_MAX_SIZE, MAP_WIDTH, MAP_HEIGHT, player, entities, max_monsters_per_room)
 
     fov_recompute = True
     fov_map = init_fov(game_map)
