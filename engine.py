@@ -29,7 +29,7 @@ def main():
     FOV_RADIUS = 10
 
     max_monsters_per_room = 3
-    
+
     colors = {
         'dark_wall': tcod.Color(0, 0, 100),
         'dark_ground': tcod.Color(50, 50, 150),
