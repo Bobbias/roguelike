@@ -4,5 +4,4 @@ class Fighter:
         self.hp = hp
         self.defense = defense
         self.power = power
-        
 
