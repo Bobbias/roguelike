@@ -1,4 +1,11 @@
 import tcod
+from enum import Enum
+
+class RenderOrder(Enum):
+    CORPSE = 1
+    ITEM = 2
+    ACTOR = 3
+
 
 def render_all(con, entities, player, game_map, fov_map, fov_recompute, screen_width, screen_height, colors):
     if fov_recompute:
@@ -19,7 +26,8 @@ def render_all(con, entities, player, game_map, fov_map, fov_recompute, screen_w
                     else:
                         tcod.console_set_char_background(con, x, y, colors.get('dark_ground'), tcod.BKGND_SET)
 
-    for entity in entities:
+    entities_in_render_order = sorted(entities, key=lambda x: x.render_order.value)
+    for entity in entities_in_render_order:
         draw_entity(con, entity, fov_map)
 
     tcod.console_set_default_foreground(con, tcod.white)

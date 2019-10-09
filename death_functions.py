@@ -1,6 +1,7 @@
 import tcod
 
 from game_states import GameStates
+from render_functions import RenderOrder
 
 
 def kill_player(player):
@@ -10,7 +11,7 @@ def kill_player(player):
     return 'you died!', GameStates.PLAYER_DEAD
 
 def kill_monster(monster):
-    death_message = '{} is dead!'.format(monster.name.captialize())
+    death_message = '{} is dead!'.format(monster.name.capitalize())
 
     monster.char = '%'
     monster.color = tcod.dark_red
@@ -18,5 +19,6 @@ def kill_monster(monster):
     monster.fighter = None
     monster.ai = None
     monster.name = 'remains of {}'.format(monster.name)
+    monster.render_order = RenderOrder.CORPSE
 
     return death_message
