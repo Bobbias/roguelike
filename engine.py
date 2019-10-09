@@ -90,7 +90,7 @@ def main():
                 target = get_blocking_entities_at_location(entities, destination_x, destination_y)
 
                 if target:
-                    print("you kick the {} in the shins, much to it's dismay!".format(target.name))
+                    player.fighter.attack(target)
                 else:
                     player.move(dx, dy)
                     fov_recompute = True
@@ -105,7 +105,7 @@ def main():
         if game_state == GameStates.ENEMY_TURN:
             for entity in entities:
                 if entity.ai:
-                    entity.ai.take_turn()
+                    entity.ai.take_turn(player, fov_map, game_map, entities)
             game_state = GameStates.PLAYERS_TURN
 
 
