@@ -138,7 +138,7 @@ def main():
 
                             print(message)
 
-                            if game_state = GameStates.PLAYER_DEAD:
+                            if game_state == GameStates.PLAYER_DEAD:
                                 break
                     if game_state == GameStates.PLAYER_DEAD:
                         break
