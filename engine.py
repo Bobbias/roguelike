@@ -8,6 +8,7 @@ from fov_functions import init_fov, recompute_fov
 from game_states import GameStates
 from components.fighter import Fighter
 from death_functions import kill_monster, kill_player
+from game_messages import MessageLog
 
 LIMIT_FPS = 20  # only for realtime roguelikes
 
@@ -20,8 +21,16 @@ def main():
     SCREEN_WIDTH = 80
     SCREEN_HEIGHT = 50
 
+    BAR_WIDTH = 20
+    PANEL_HEIGHT = 7
+    PANEL_Y = SCREEN_HEIGHT - PANEL_HEIGHT
+
     MAP_WIDTH = 80
-    MAP_HEIGHT = 45
+    MAP_HEIGHT = 43
+
+    MESSAGE_X = BAR_WIDTH + 2
+    MESSAGE_WIDTH = SCREEN_WIDTH - BAR_WIDTH - 2
+    MESSAGE_HEIGHT = PANEL_HEIGHT - 1
 
     ROOM_MAX_SIZE = 10
     ROOM_MIN_SIZE = 6
@@ -31,7 +40,7 @@ def main():
     FOV_LIGHT_WALLS = True
     FOV_RADIUS = 10
 
-    max_monsters_per_room = 3
+    MAX_MONSTERS_PER_ROOM = 3
 
     colors = {
         'dark_wall': tcod.Color(0, 0, 100),
@@ -51,10 +60,13 @@ def main():
 
     # init screen
     # window_title = 'Python 3 libtcod tutorial'
-    con = tcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, order='F')
+    con = tcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, order='F', renderer=tcod.RENDERER_OPENGL2)
+    panel = tcod.console_new(SCREEN_WIDTH, PANEL_HEIGHT)
+
+    message_log = MessageLog(MESSAGE_X, MESSAGE_WIDTH, MESSAGE_HEIGHT)
 
     game_map = GameMap(MAP_WIDTH, MAP_HEIGHT)
-    game_map.create_map(MAX_ROOMS, ROOM_MIN_SIZE, ROOM_MAX_SIZE, MAP_WIDTH, MAP_HEIGHT, player, entities, max_monsters_per_room)
+    game_map.create_map(MAX_ROOMS, ROOM_MIN_SIZE, ROOM_MAX_SIZE, MAP_WIDTH, MAP_HEIGHT, player, entities, MAX_MONSTERS_PER_ROOM)
 
     fov_recompute = True
     fov_map = init_fov(game_map)
@@ -69,7 +81,8 @@ def main():
         if fov_recompute:
             recompute_fov(fov_map, player.x, player.y, FOV_RADIUS, FOV_LIGHT_WALLS, FOV_ALGORITHM)
 
-        render_all(con, entities, player, game_map, fov_map, fov_recompute, SCREEN_WIDTH, SCREEN_HEIGHT, colors)
+        render_all(con, panel, message_log, entities, player, game_map, fov_map, fov_recompute,
+                   SCREEN_WIDTH, SCREEN_HEIGHT, BAR_WIDTH, PANEL_HEIGHT, PANEL_Y, colors)
         fov_recompute = False
 
         tcod.console_flush()
@@ -111,7 +124,7 @@ def main():
             dead_entity = player_turn_result.get('dead')
 
             if message:
-                print(message)
+                message_log.add_message(message)
             if dead_entity:
                 if dead_entity == player:
                     message, game_state = kill_player(dead_entity)
@@ -128,7 +141,7 @@ def main():
                         dead_entity = enemy_turn_result.get('dead')
 
                         if message:
-                            print(message)
+                            message_log.add_message(message)
 
                         if dead_entity:
                             if dead_entity == player:
@@ -136,7 +149,7 @@ def main():
                             else:
                                 message = kill_monster(dead_entity)
 
-                            print(message)
+                            message_log.add_message(message)
 
                             if game_state == GameStates.PLAYER_DEAD:
                                 break

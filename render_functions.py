@@ -6,8 +6,22 @@ class RenderOrder(Enum):
     ITEM = 2
     ACTOR = 3
 
+def render_bar(panel, x, y, total_width, name, value, maximum, bar_color, back_color):
+    bar_width = int(float(value) / maximum * total_width)
 
-def render_all(con, entities, player, game_map, fov_map, fov_recompute, screen_width, screen_height, colors):
+    tcod.console_set_default_background(panel, back_color)
+    tcod.console_rect(panel, x, y, total_width, 1, False, tcod.BKGND_SCREEN)
+
+    tcod.console_set_default_background(panel, bar_color)
+    if bar_width > 0:
+        tcod.console_rect(panel, x, y, bar_width, 1, False, tcod.BKGND_SCREEN)
+
+    tcod.console_set_default_foreground(panel, tcod.white)
+    tcod.console_print_ex(panel, int(x + total_width / 2), y, tcod.BKGND_NONE, tcod.CENTER,
+                          '{}: {}/{}'.format(name, value, maximum))
+
+def render_all(con, panel, message_log, entities, player, game_map, fov_map, fov_recompute, screen_width, screen_height,
+               bar_width, panel_height, panel_y, colors):
     if fov_recompute:
         for y in range(game_map.height):
             for x in range(game_map.width):
@@ -30,11 +44,19 @@ def render_all(con, entities, player, game_map, fov_map, fov_recompute, screen_w
     for entity in entities_in_render_order:
         draw_entity(con, entity, fov_map)
 
-    tcod.console_set_default_foreground(con, tcod.white)
-    tcod.console_print_ex(con, 1, screen_height - 2, tcod.BKGND_NONE, tcod.LEFT,
-                          'HP: {0:02}/{1:02}'.format(player.fighter.hp, player.fighter.max_hp))
-
     tcod.console_blit(con, 0, 0, screen_width, screen_height, 0, 0, 0)
+
+    tcod.console_set_default_background(panel, tcod.black)
+    tcod.console_clear(panel)
+
+    y = 1
+    for message in message_log.messages:
+        tcod.console_set_default_foreground(panel, message.color)
+        tcod.console_print_ex(panel, message_log.x, y, tcod.BKGND_NONE, tcod.LEFT, message.text)
+        y += 1
+
+    render_bar(panel, 1, 1, bar_width, 'HP', player.fighter.hp, player.fighter.max_hp, tcod.light_red, tcod.darker_red)
+    tcod.console_blit(panel, 0, 0, screen_width, panel_height, 0, 0, panel_y)
 
 def clear_all(con, entities):
     for entity in entities:
