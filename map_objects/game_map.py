@@ -90,7 +90,8 @@ class GameMap:
                     monster = Entity(x, y, 'T', tcod.darker_green, 'Troll', blocks=True,
                                      render_order=RenderOrder.ACTOR, fighter=fighter_component, ai=ai_component)
 
-            entities.append(monster)
+            if (monster):
+                entities.append(monster)
 
 
     def is_blocked(self, x, y):
