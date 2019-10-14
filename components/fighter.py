@@ -27,7 +27,12 @@ class Fighter:
             results.append({'message': Message('{} attacks {} for {} hit points.'.format(self.owner.name.capitalize(), target.name, str(damage)), tcod.white)})
             results.extend(target.fighter.take_damage(damage))
         else:
-            results.append({'message': Message('{} attacks {} but does no damage.'.format(sel.owner.name.captialize(), target.name), tcod.white)})
+            results.append({'message': Message('{} attacks {} but does no damage.'.format(self.owner.name.captialize(), target.name), tcod.white)})
 
         return results
 
+    def heal(self, amount):
+        self.hp += amount
+
+        if self.hp > self.max_hp:
+            self.hp = self.max_hp

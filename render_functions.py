@@ -1,5 +1,7 @@
 import tcod
 from enum import Enum
+from game_states import GameStates
+from menus import inventory_menu
 
 class RenderOrder(Enum):
     CORPSE = 1
@@ -30,7 +32,12 @@ def render_bar(panel, x, y, total_width, name, value, maximum, bar_color, back_c
                           '{}: {}/{}'.format(name, value, maximum))
 
 def render_all(con, panel, message_log, entities, player, game_map, fov_map, fov_recompute, screen_width, screen_height,
-               bar_width, panel_height, panel_y, mouse, colors):
+               bar_width, panel_height, panel_y, mouse, colors, game_state):
+
+    # SECTION: FOV
+#    tcod.console_clear(con)
+#    tcod.console_flush()
+
     if fov_recompute:
         for y in range(game_map.height):
             for x in range(game_map.width):
@@ -49,11 +56,15 @@ def render_all(con, panel, message_log, entities, player, game_map, fov_map, fov
                     else:
                         tcod.console_set_char_background(con, x, y, colors.get('dark_ground'), tcod.BKGND_SET)
 
+    # SECTION: Entities
+
     entities_in_render_order = sorted(entities, key=lambda x: x.render_order.value)
     for entity in entities_in_render_order:
         draw_entity(con, entity, fov_map)
 
     tcod.console_blit(con, 0, 0, screen_width, screen_height, 0, 0, 0)
+
+    # SECTION: Message log
 
     tcod.console_set_default_background(panel, tcod.black)
     tcod.console_clear(panel)
@@ -66,11 +77,21 @@ def render_all(con, panel, message_log, entities, player, game_map, fov_map, fov
 
     render_bar(panel, 1, 1, bar_width, 'HP', player.fighter.hp, player.fighter.max_hp, tcod.light_red, tcod.darker_red)
 
-    # print names of entities under the mouse
+    # SECTION: Mouseover
     tcod.console_set_default_foreground(panel, tcod.light_gray)
     tcod.console_print_ex(panel, 1, 0, tcod.BKGND_NONE, tcod.LEFT, get_names_under_mouse(mouse, entities, fov_map))
 
     tcod.console_blit(panel, 0, 0, screen_width, panel_height, 0, 0, panel_y)
+
+    # SECTION: Inventory menu
+
+    if game_state in (GameStates.SHOW_INVENTORY, GameStates.DROP_INVENTORY):
+        if game_state == GameStates.SHOW_INVENTORY:
+            inventory_title = 'Press the key next to an item to use it, or Esc to cancel.\n'
+        else:
+            inventory_title = 'Press the key next to an item to drop it, or Esc to cancel.\n'
+        inventory_menu(con, inventory_title,
+                       player.inventory, 50, screen_width, screen_height)
 
 def clear_all(con, entities):
     for entity in entities:
