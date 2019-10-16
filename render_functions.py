@@ -31,7 +31,7 @@ def render_bar(panel, x, y, total_width, name, value, maximum, bar_color, back_c
     tcod.console_print_ex(panel, int(x + total_width / 2), y, tcod.BKGND_NONE, tcod.CENTER,
                           '{}: {}/{}'.format(name, value, maximum))
 
-def render_all(con, panel, message_log, entities, player, game_map, fov_map, fov_recompute, screen_width, screen_height,
+def render_all(con, panel, sidebar, message_log, entities, player, game_map, fov_map, fov_recompute, screen_width, screen_height,
                bar_width, panel_height, panel_y, mouse, colors, game_state):
 
     # SECTION: FOV
@@ -66,7 +66,7 @@ def render_all(con, panel, message_log, entities, player, game_map, fov_map, fov
 
     # SECTION: Message log
 
-    tcod.console_set_default_background(panel, tcod.black)
+    tcod.console_set_default_background(panel, tcod.Color(10, 10, 10))
     tcod.console_clear(panel)
 
     y = 1
@@ -85,13 +85,14 @@ def render_all(con, panel, message_log, entities, player, game_map, fov_map, fov
 
     # SECTION: Inventory menu
 
-    if game_state in (GameStates.SHOW_INVENTORY, GameStates.DROP_INVENTORY):
-        if game_state == GameStates.SHOW_INVENTORY:
-            inventory_title = 'Press the key next to an item to use it, or Esc to cancel.\n'
-        else:
-            inventory_title = 'Press the key next to an item to drop it, or Esc to cancel.\n'
-        inventory_menu(con, inventory_title,
-                       player.inventory, 50, screen_width, screen_height)
+    if game_state == GameStates.SHOW_INVENTORY:
+        inventory_title = 'Press the key next to an item to use it, or Esc to cancel.\n'
+    elif game_state == GameStates.DROP_INVENTORY:
+        inventory_title = 'Press the key next to an item to drop it, or Esc to cancel.\n'
+    else:
+        inventory_title = 'Player Inventory:'
+    inventory_menu(sidebar, inventory_title,
+                   player.inventory, 35, screen_width, screen_height)
 
 def clear_all(con, entities):
     for entity in entities:

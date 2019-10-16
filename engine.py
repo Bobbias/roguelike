@@ -19,15 +19,18 @@ FULLSCREEN = False
 def main():
     """Main function for the game."""
 
-    SCREEN_WIDTH = 80
+    SCREEN_WIDTH = 120
     SCREEN_HEIGHT = 50
+
+    MAP_WIDTH = 80
+    MAP_HEIGHT = 43
 
     BAR_WIDTH = 20
     PANEL_HEIGHT = 7
     PANEL_Y = SCREEN_HEIGHT - PANEL_HEIGHT
 
-    MAP_WIDTH = 80
-    MAP_HEIGHT = 43
+    SIDEBAR_WIDTH = SCREEN_WIDTH - MAP_WIDTH
+    SIDEBAR_HEIGHT = SCREEN_HEIGHT
 
     MESSAGE_X = BAR_WIDTH + 2
     MESSAGE_WIDTH = SCREEN_WIDTH - BAR_WIDTH - 2
@@ -65,6 +68,7 @@ def main():
     # window_title = 'Python 3 libtcod tutorial'
     con = tcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, order='F', renderer=tcod.RENDERER_OPENGL2)
     panel = tcod.console_new(SCREEN_WIDTH, PANEL_HEIGHT)
+    sidebar = tcod.console_new(SIDEBAR_WIDTH, SIDEBAR_HEIGHT)
 
     message_log = MessageLog(MESSAGE_X, MESSAGE_WIDTH, MESSAGE_HEIGHT)
 
@@ -89,9 +93,9 @@ def main():
         if fov_recompute:
             recompute_fov(fov_map, player.x, player.y, FOV_RADIUS, FOV_LIGHT_WALLS, FOV_ALGORITHM)
 
-        render_all(con, panel, message_log, entities, player, game_map, fov_map, fov_recompute,
-                   SCREEN_WIDTH, SCREEN_HEIGHT, BAR_WIDTH, PANEL_HEIGHT, PANEL_Y, mouse, colors,
-                   game_state)
+        render_all(con, panel, sidebar, message_log, entities, player, game_map, fov_map,
+                   fov_recompute, SCREEN_WIDTH, SCREEN_HEIGHT, BAR_WIDTH, PANEL_HEIGHT,
+                   PANEL_Y, mouse, colors, game_state)
         fov_recompute = False
 
         tcod.console_flush()
