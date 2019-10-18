@@ -190,7 +190,7 @@ def main():
             item_consumed = player_turn_result.get('consumed')
             item_dropped = player_turn_result.get('item_dropped')
             targeting = player_turn_result.get('targeting')
-            targeting_cancelled = player_turn_results.get('targeting_cancelled')
+            targeting_cancelled = player_turn_result.get('targeting_cancelled')
 
             if message:
                 message_log.add_message(message)
@@ -215,7 +215,7 @@ def main():
                 game_state = GameStates.TARGETING
                 targeting_item = targeting
                 message_log.add_message(targeting_item.item.targeting_message)
-            if targeing_cancelled:
+            if targeting_cancelled:
                 game_state = previous_game_state
                 message_log.add_message(Message('Targeting cancelled'))
 

@@ -79,12 +79,13 @@ def handle_inventory_keys(key):
 
     return {}
 
+# currently does not work, probably requires updated tcod.event stuff.
 def handle_mouse(mouse):
     (x, y) = (mouse.cx, mouse.cy)
 
     if mouse.lbutton_pressed:
         return {'left_click': (x, y)}
-    elif: mouse.rbutton_pressed:
+    elif mouse.rbutton_pressed:
         return {'right_click': (x, y)}
 
     return {}
