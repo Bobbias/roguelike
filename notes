@@ -1,0 +1,1 @@
+Consider using json to store a list of items and/or spell effects, and/or control scheme and simply load those.
