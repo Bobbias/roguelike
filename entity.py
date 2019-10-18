@@ -38,12 +38,15 @@ class Entity:
         dy = target_y - self.y
         distance = math.sqrt(dx ** 2 + dy ** 2)
 
-        dx = int(round(dx / distance_x))
-        dy = int(round(dy / distance_y))
+        dx = int(round(dx / distance))
+        dy = int(round(dy / distance))
 
         if not (game_map.is_blocked(self.x + dx, self.y + dy) or
                 get_blocking_entities_at_location(entities, self.x + dx, self.y + dy)):
             self.move(dx, dy)
+
+    def distance(self, x, y):
+        return math.sqrt((x - self.x) ** 2 + (y - self.y) ** 2)
 
     def move_astar(self, target, game_map, entities):
         fov = tcod.map_new(game_map.width, game_map.height)
