@@ -113,8 +113,8 @@ def main():
         exit_game = action.get('exit')
         fullscreen = action.get('fullscreen')
 
-        left_click = action.get('left_click')
-        right_click = action.get('right_click')
+        left_click = mouse_action.get('left_click')
+        right_click = mouse_action.get('right_click')
 
         # SECTION: action handlers
 
