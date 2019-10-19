@@ -1,15 +1,13 @@
 import tcod
 import tcod.event
 from input_handlers import handle_keys, handle_mouse
-from entity import Entity, get_blocking_entities_at_location
-from render_functions import render_all, clear_all, RenderOrder
-from map_objects.game_map import GameMap
+from entity import get_blocking_entities_at_location
+from render_functions import render_all, clear_all
 from fov_functions import init_fov, recompute_fov
 from game_states import GameStates
-from components.fighter import Fighter
 from death_functions import kill_monster, kill_player
-from game_messages import MessageLog, Message
-from components.inventory import Inventory
+from game_messages import Message
+from loader_functions.initialize_new_game import get_constants, get_game_variables
 
 LIMIT_FPS = 20  # only for realtime roguelikes
 
@@ -19,42 +17,7 @@ FULLSCREEN = False
 def main():
     """Main function for the game."""
 
-    SCREEN_WIDTH = 80
-    SCREEN_HEIGHT = 50
-
-    BAR_WIDTH = 20
-    PANEL_HEIGHT = 7
-    PANEL_Y = SCREEN_HEIGHT - PANEL_HEIGHT
-
-    MAP_WIDTH = 80
-    MAP_HEIGHT = 43
-
-    MESSAGE_X = BAR_WIDTH + 2
-    MESSAGE_WIDTH = SCREEN_WIDTH - BAR_WIDTH - 2
-    MESSAGE_HEIGHT = PANEL_HEIGHT - 1
-
-    ROOM_MAX_SIZE = 10
-    ROOM_MIN_SIZE = 6
-    MAX_ROOMS = 30
-
-    FOV_ALGORITHM = 0
-    FOV_LIGHT_WALLS = True
-    FOV_RADIUS = 10
-
-    MAX_MONSTERS_PER_ROOM = 3
-    MAX_ITEMS_PER_ROOM = 2
-
-    colors = {
-        'dark_wall': tcod.Color(0, 0, 100),
-        'dark_ground': tcod.Color(50, 50, 150),
-        'light_wall': tcod.Color(130, 110, 50),
-        'light_ground': tcod.Color(200, 180, 50)
-    }
-
-    inventory_component = Inventory(26)
-    fighter_component = Fighter(hp=30, defense=2, power=5)
-    player = Entity(0, 0, '@', tcod.white, 'Player', blocks=True, render_order=RenderOrder.ACTOR, fighter=fighter_component, inventory=inventory_component)
-    entities = [player]
+    constants = get_constants()
 
     # setup Font
     font_path = '/home/bobbias/roguelike/arial10x10.png'
@@ -63,21 +26,16 @@ def main():
 
     # init screen
     # window_title = 'Python 3 libtcod tutorial'
-    con = tcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, order='F', renderer=tcod.RENDERER_OPENGL2)
-    panel = tcod.console_new(SCREEN_WIDTH, PANEL_HEIGHT)
+    con = tcod.console_init_root(constants['screen_width'] , constants['screen_height'], order='F', renderer=tcod.RENDERER_OPENGL2)
+    panel = tcod.console_new(constants['screen_width'] , constants['panel_height'])
 
-    message_log = MessageLog(MESSAGE_X, MESSAGE_WIDTH, MESSAGE_HEIGHT)
-
-    game_map = GameMap(MAP_WIDTH, MAP_HEIGHT)
-    game_map.create_map(MAX_ROOMS, ROOM_MIN_SIZE, ROOM_MAX_SIZE, MAP_WIDTH, MAP_HEIGHT, player, entities, MAX_MONSTERS_PER_ROOM, MAX_ITEMS_PER_ROOM)
-
+    player, entities, game_map, message_log, game_state = get_game_variables(constants)
     fov_recompute = True
     fov_map = init_fov(game_map)
 
     key = tcod.Key()
     mouse = tcod.Mouse()
 
-    game_state = GameStates.PLAYERS_TURN
     previous_game_state = game_state
 
     targeting_item = None
@@ -89,10 +47,10 @@ def main():
         # SECTION: fov and rendering
         
         if fov_recompute:
-            recompute_fov(fov_map, player.x, player.y, FOV_RADIUS, FOV_LIGHT_WALLS, FOV_ALGORITHM)
+            recompute_fov(fov_map, player.x, player.y, constants['fov_radius'], constants['fov_light_walls'], constants['fov_algorithm'])
 
         render_all(con, panel, message_log, entities, player, game_map, fov_map, fov_recompute,
-                   SCREEN_WIDTH, SCREEN_HEIGHT, BAR_WIDTH, PANEL_HEIGHT, PANEL_Y, mouse, colors,
+                   constants['screen_width'] , constants['screen_height'], constants['bar_width'], constants['panel_height'], constants['panel_y'], mouse, constants['colors'],
                    game_state)
         fov_recompute = False
 
