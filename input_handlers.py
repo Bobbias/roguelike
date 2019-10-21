@@ -79,7 +79,6 @@ def handle_inventory_keys(key):
 
     return {}
 
-# currently does not work, probably requires updated tcod.event stuff.
 def handle_mouse(mouse):
     (x, y) = (mouse.cx, mouse.cy)
 
@@ -87,5 +86,17 @@ def handle_mouse(mouse):
         return {'left_click': (x, y)}
     elif mouse.rbutton_pressed:
         return {'right_click': (x, y)}
+
+    return {}
+
+def handle_main_menu(key):
+    key_char = chr(key.c)
+
+    if key_char == 'a':
+        return {'new_game': True}
+    if key_char == 'b':
+        return {'load_game': True}
+    if key_char == 'c' or key.vk == tcod.KEY_ESCAPE:
+        return {'exit': True}
 
     return {}

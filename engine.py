@@ -1,6 +1,6 @@
 import tcod
 import tcod.event
-from input_handlers import handle_keys, handle_mouse
+from input_handlers import handle_keys, handle_mouse, handle_main_menu
 from entity import get_blocking_entities_at_location
 from render_functions import render_all, clear_all
 from fov_functions import init_fov, recompute_fov
@@ -8,50 +8,35 @@ from game_states import GameStates
 from death_functions import kill_monster, kill_player
 from game_messages import Message
 from loader_functions.initialize_new_game import get_constants, get_game_variables
+from loader_functions.data_loader import load_game, save_game
+from menus import main_menu, message_box
 
 LIMIT_FPS = 20  # only for realtime roguelikes
 
 TURN_BASED = True
 FULLSCREEN = False
 
-def main():
-    """Main function for the game."""
-
-    constants = get_constants()
-
-    # setup Font
-    font_path = '/home/bobbias/roguelike/arial10x10.png'
-    font_flags = tcod.FONT_TYPE_GREYSCALE | tcod.FONT_LAYOUT_TCOD
-    tcod.console_set_custom_font(font_path, font_flags)
-
-    # init screen
-    # window_title = 'Python 3 libtcod tutorial'
-    con = tcod.console_init_root(constants['screen_width'] , constants['screen_height'], order='F', renderer=tcod.RENDERER_OPENGL2)
-    panel = tcod.console_new(constants['screen_width'] , constants['panel_height'])
-
-    player, entities, game_map, message_log, game_state = get_game_variables(constants)
+def play_game(player, entities, game_map, message_log, game_state, con, panel, constants):
     fov_recompute = True
     fov_map = init_fov(game_map)
 
     key = tcod.Key()
     mouse = tcod.Mouse()
 
+    game_state = GameStates.PLAYERS_TURN
     previous_game_state = game_state
 
     targeting_item = None
 
     while not tcod.console_is_window_closed():
-
         tcod.sys_check_for_event(tcod.EVENT_KEY_PRESS | tcod.EVENT_MOUSE, key, mouse)
 
-        # SECTION: fov and rendering
-        
         if fov_recompute:
-            recompute_fov(fov_map, player.x, player.y, constants['fov_radius'], constants['fov_light_walls'], constants['fov_algorithm'])
-
+            recompute_fov(fov_map, player.x, player.y, constants['fov_radius'], constants['fov_light_walls'],
+                          constants['fov_algorithm'])
         render_all(con, panel, message_log, entities, player, game_map, fov_map, fov_recompute,
-                   constants['screen_width'] , constants['screen_height'], constants['bar_width'], constants['panel_height'], constants['panel_y'], mouse, constants['colors'],
-                   game_state)
+                   constants['screen_width'], constants['screen_height'], constants['bar_width'], constants['panel_height'], constants['panel_y'], mouse, constants['colors'], game_state)
+
         fov_recompute = False
 
         tcod.console_flush()
@@ -77,7 +62,6 @@ def main():
         # SECTION: action handlers
 
         player_turn_results = []
-
         if move and game_state == GameStates.PLAYERS_TURN:
             dx, dy = move
             destination_x = player.x + dx
@@ -134,6 +118,8 @@ def main():
             elif game_state == GameStates.TARGETING:
                 player_turn_results.append({'targeting_cancelled': True})
             else:
+                save_game(player, entities, game_map, message_log, game_state)
+
                 return True
 
         if fullscreen:
@@ -206,6 +192,72 @@ def main():
             else:
                 game_state = GameStates.PLAYERS_TURN
 
+
+def main():
+    """Main function for the game."""
+
+    constants = get_constants()
+
+    # setup Font
+    font_path = '/home/bobbias/roguelike/arial10x10.png'
+    font_flags = tcod.FONT_TYPE_GREYSCALE | tcod.FONT_LAYOUT_TCOD
+    tcod.console_set_custom_font(font_path, font_flags)
+
+    # init screen
+    # window_title = 'Python 3 libtcod tutorial'
+    con = tcod.console_init_root(constants['screen_width'] , constants['screen_height'], order='F', renderer=tcod.RENDERER_OPENGL2)
+    panel = tcod.console_new(constants['screen_width'] , constants['panel_height'])
+
+    player = None
+    entities = []
+    game_map = None
+    message_log = None
+    game_state = None
+
+    show_main_menu = True
+    show_load_error_message = False
+
+    main_menu_background_imgage = tcod.image_load('menu_background.png')
+
+    key = tcod.Key()
+    mouse = tcod.Mouse()
+
+    while not tcod.console_is_window_closed():
+        tcod.sys_check_for_event(tcod.EVENT_KEY_PRESS | tcod.EVENT_MOUSE, key, mouse)
+
+        if show_main_menu:
+            main_menu(con, main_menu_background_imgage, constants['screen_width'], constants['screen_height'])
+
+            if show_load_error_message:
+                message_box(con, 'No save game to load!', 50, constants['screen_width'], constants['screen_height'])
+
+            tcod.console_flush()
+
+            action = handle_main_menu(key)
+
+            new_game = action.get('new_game')
+            load_saved_game = action.get('load_saved_game')
+            exit_game = action.get('exit')
+
+            if show_load_error_message and (new_game or load_saved_game or exit_game):
+                show_load_error_message = False
+            elif new_game:
+                player, entities, game_map, message_log, game_state = get_game_variables(constants)
+                game_state = GameStates.PLAYERS_TURN
+                show_main_menu = False
+            elif load_saved_game:
+                try:
+                    player, entities, game_map, message_log, game_state = load_game()
+                    show_main_menu = False
+                except FileNotFoundError:
+                    show_load_error_message = True
+            elif exit_game:
+                break
+
+        else:
+            tcod.console_clear(con)
+            play_game(player, entities, game_map, message_log, game_state, con, panel, constants)
+            show_main_menu = True
 
 if __name__ == '__main__':
     main()
