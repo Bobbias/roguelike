@@ -3,3 +3,4 @@
 *~
 /#.pylintrc#
 **/__pycache__/
+/savegame.dat.db

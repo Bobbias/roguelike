@@ -4,7 +4,7 @@ from render_functions import RenderOrder
 
 class Entity:
     def __init__(self, x, y, char, color, name, blocks=False,render_order=RenderOrder.CORPSE,
-                 fighter=None, ai=None, item=None, inventory=None):
+                 fighter=None, ai=None, item=None, inventory=None, stairs=None):
         self.x = x
         self.y = y
         self.char = char
@@ -16,6 +16,7 @@ class Entity:
         self.ai = ai
         self.item = item
         self.inventory = inventory
+        self.stairs = stairs
 
         if self.fighter:
             self.fighter.owner = self
@@ -28,6 +29,9 @@ class Entity:
 
         if self.inventory:
             self.inventory.owner = self
+
+        if self.stairs:
+            self.stairs.owner = self
 
     def move(self, dx, dy):
         self.x += dx

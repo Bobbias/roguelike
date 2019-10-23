@@ -35,6 +35,9 @@ def handle_player_turn_keys(key):
     elif key_char == 'g':
         return {'pickup': True}
 
+    elif key_char == '>' or key.vk == tcod.KEY_ENTER:
+        return {'take_stairs': True}
+
     elif key_char == 'i':
         return {'show_inventory': True}
     elif key_char == 'd':
