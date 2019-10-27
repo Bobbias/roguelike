@@ -1,3 +1,5 @@
 Consider using json to store a list of items and/or spell effects, and/or control scheme and simply load those.
 
 Consider making stairs bidirectional, moving to BSP based dungeon generation, and refactoring game state into a single class for shorter function definitions?
+
+https://github.com/HexDecimal/roguelike-tutorial/blob/master/gamemap.py use this as a reference for modern tcod

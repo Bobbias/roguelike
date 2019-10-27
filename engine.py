@@ -117,7 +117,6 @@ def play_game(player, entities, game_map, message_log, game_state, con, panel, c
         if game_state == GameStates.TARGETING:
             if left_click:
                 target_x, target_y = left_click
-
                 item_use_results = player.inventory.use(targeting_item, entities=entities, fov_map=fov_map,
                                                         target_x=target_x, target_y=target_y)
                 player_turn_results.extend(item_use_results)

@@ -95,7 +95,7 @@ def cast_confuse(*args, **kwargs):
         if entity.x == target_x and entity.y == target_y and entity.ai:
             confused_ai = ConfusedMonster(entity.ai, 10)
 
-            consued_ai.owner = entity
+            confused_ai.owner = entity
             entity.ai = confused_ai
 
             results.append({'consumed': True,
@@ -106,4 +106,4 @@ def cast_confuse(*args, **kwargs):
         else:
             results.append({'consumed': False,
                             'message': Message('There is no targetable enemy at that location.', tcod.yellow)})
-        return results
+    return results
